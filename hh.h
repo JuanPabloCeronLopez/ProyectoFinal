@@ -1,0 +1,13 @@
+//
+// Created by USER on 18/11/2025.
+//
+
+#ifndef VIDEOJUEGO_PROYECTO_FINALPOO_HH_H
+#define VIDEOJUEGO_PROYECTO_FINALPOO_HH_H
+
+
+class hh {
+};
+
+
+#endif //VIDEOJUEGO_PROYECTO_FINALPOO_HH_H
