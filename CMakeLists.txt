@@ -12,5 +12,4 @@ add_executable(VideoJuego_Proyecto_finalPOO main.cpp
         Simon.h
         JuanPablo.cpp
         JuanPablo.h
-        hh.cpp
-        hh.h)
+)
