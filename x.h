@@ -7,6 +7,7 @@
 
 
 class x {
+    int x1;
 };
 
 
