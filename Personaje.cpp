@@ -1,7 +1,7 @@
 
 #include "Personaje.h"
 
-// Se crea el constructor para generara el valor
+// Se crea el constructor para generara el valor de sus
 Personaje::Personaje(const std::string& nombre, int salud, int ataque)
     : nombre(nombre), salud(salud), saludMaxima(salud), ataque(ataque) {
     // Lista de inicialización (más eficiente que asignar en el cuerpo)

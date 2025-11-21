@@ -4,7 +4,7 @@
 
 // Se crea el constructor
 JuanPablo::JuanPablo()
-    : Jugador("Juan Pablo el Sabio", 80, 30),
+    : Jugador("Juan Pablo el Sabio", 90, 30),
       mana(100),
       manaMaximo(100) {
     // Juan Pablo es más frágil (80 HP) pero más poderoso (30 ATK)
@@ -13,25 +13,24 @@ JuanPablo::JuanPablo()
 
 // Implementación del Mana
 void JuanPablo::atacar() {
-    const int COSTO_MANA = 20;  // Constante para claridad
+    const int COSTO_MANA = 20;
 
     if (mana >= COSTO_MANA) {
         // Tiene suficiente mana para un ataque mágico
         mana -= COSTO_MANA;
 
-        std::cout << "\n🔮 " << nombre << " lanza un rayo arcano!\n";
-        std::cout << "Daño mágico: " << ataque << " puntos\n";
+        std::cout << "\n" << nombre << " lanza un rayo arcano!\n";
+        std::cout << "Danio magico: " << ataque << " puntos\n";
         std::cout << "Mana restante: " << mana << "/" << manaMaximo << "\n";
 
     } else {
         // Sin mana suficiente, ataque débil físico
-        std::cout << "\n⚠️  ¡Mana insuficiente!\n";
-        std::cout << nombre << " golpea con su bastón (ataque débil).\n";
-        std::cout << "Daño físico: " << (ataque / 2) << " puntos\n";
-        std::cout << "Necesitas " << COSTO_MANA << " de mana para atacar mágicamente.\n";
+        std::cout << "\nMana insuficiente!\n";
+        std::cout << nombre << " golpea con su baston (ataque debil).\n";
+        std::cout << "Danio fisico: " << (ataque / 2) << " puntos\n";
+        std::cout << "Necesitas " << COSTO_MANA << " de mana para atacar magicamente.\n";
     }
 }
-
 // Habilidad Especial
 void JuanPablo::tormenta() {
     const int COSTO_TORMENTA = 50;
@@ -61,6 +60,6 @@ void JuanPablo::recuperarMana(int cantidad) {
         mana = manaMaximo;
     }
 
-    std::cout << "✨ Mana recuperado: +" << cantidad << "\n";
+    std::cout << " Mana recuperado: +" << cantidad << "\n";
     std::cout << "Mana actual: " << mana << "/" << manaMaximo << "\n";
 }

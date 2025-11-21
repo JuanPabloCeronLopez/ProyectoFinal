@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 
-class Personaje { //se crea la clase base Personaje
+class Personaje { //se crea la clase base Personaje (queremos encapsulamiento - ocultar los datos internos y solo exponer métodos controlados.)
 protected: // se acceden a los atributos para que las otras clases hijas (Simón y Juan Pablo) puedan gheredarlas
     std::string nombre;
     int salud;
