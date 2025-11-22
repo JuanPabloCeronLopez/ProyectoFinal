@@ -16,4 +16,8 @@ add_executable(VideoJuego_Proyecto_finalPOO
         Habitacion.cpp
         GameController.cpp
         GameController.h
+        Arma.cpp
+        Arma.h
+        Pocion.cpp
+        Pocion.h
 )

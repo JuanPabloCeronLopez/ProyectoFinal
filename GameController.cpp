@@ -8,8 +8,11 @@
 using namespace std;
 
 GameController::GameController()
-    : jugador(nullptr), juegoActivo(true),
-      enCombate(false), pocionesUsadas(0) {}
+    : jugador(nullptr),
+      juegoActivo(true),
+      enCombate(false),
+      ataquesRealizados(0),
+      pocionesUsadas(0) {}
 
 GameController::~GameController() {
     delete jugador;
@@ -17,7 +20,6 @@ GameController::~GameController() {
 
 void GameController::iniciar() {
     cout << "Aventura Textual\n\n";
-
     cout << "Selecciona tu personaje:\n";
     cout << "1. Simon\n";
     cout << "2. Juan Pablo\n";
@@ -27,8 +29,7 @@ void GameController::iniciar() {
     cin >> opcion;
     cin.ignore();
 
-    if (opcion == 1) jugador = new Simon();
-    else jugador = new JuanPablo();
+    jugador = (opcion == 1) ? (Jugador*) new Simon() : (Jugador*) new JuanPablo();
 
     manager.loadDefaultRooms();
     manager.printCurrentRoom();
@@ -42,108 +43,64 @@ void GameController::loopPrincipal() {
         string cmd;
         getline(cin, cmd);
         transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
-
         procesarComando(cmd);
     }
 }
 
 void GameController::procesarComando(const string& cmd) {
-    // comandos globales
+
     if (cmd == "salir") {
         cout << "Fin del juego.\n";
         juegoActivo = false;
         return;
     }
 
+    // MODO EXPLORACIÓN
     if (!enCombate) {
-        // modo exploración
-        if (cmd == "ayuda") {
-            mostrarOpcionesExploracion();
+        if (cmd == "ayuda") { mostrarOpcionesExploracion(); return; }
+        if (cmd == "1") { manager.printCurrentRoom(); return; }
+        if (cmd == "2") { jugador->mostrarEstado(); return; }
+        if (cmd == "3") {
+            cout << "Direccion (norte/sur/este/oeste): ";
+            string d; getline(cin, d);
+            mover(d);
             return;
         }
-
-        if (cmd == "mirar") {
-            manager.printCurrentRoom();
-            return;
-        }
-
-        if (cmd == "estado") {
-            jugador->mostrarEstado();
-            return;
-        }
-
-        if (cmd.rfind("ir ", 0) == 0) {
-            mover(cmd.substr(3));
-            return;
-        }
-
-        if (cmd == "atacar") {
-            iniciarCombate();
-            return;
-        }
-
-        if (cmd == "recoger") {
-            cout << "Aun no implementado.\n";
-            return;
-        }
+        if (cmd == "4") { iniciarCombate(); return; }
+        if (cmd == "5") { recogerObjeto(); return; }
 
         cout << "Comando no reconocido.\n";
         return;
     }
 
-    // modo combate
-    if (cmd == "ayuda") {
-        mostrarOpcionesCombate();
-        return;
-    }
-
-    if (cmd == "estado") {
-        jugador->mostrarEstado();
-        return;
-    }
-
-    if (cmd == "atacar") {
-        combatir();
-        return;
-    }
-
-    if (cmd == "curar") {
-        usarPocion();
-        return;
-    }
-
-    if (cmd == "habilidad") {
-        usarHabilidad();
-        return;
-    }
-
-    if (cmd == "huir") {
-        huirCombate();
-        return;
-    }
-
+    // MODO COMBATE
+    if (cmd == "ayuda") { mostrarOpcionesCombate(); return; }
+    if (cmd == "1") { combatir(); return; }
+    if (cmd == "2") { usarHabilidad(); return; }
+    if (cmd == "3") { usarPocion(); return; }
+    if (cmd == "4") { jugador->mostrarEstado(); return; }
+    if (cmd == "5") { huirCombate(); return; }
 
     cout << "Comando no valido en combate.\n";
 }
 
 void GameController::mostrarOpcionesExploracion() {
-    cout << "\n=== Comandos de Exploración ===\n";
-    cout << "mirar        - ver habitacion\n";
-    cout << "estado       - ver estadisticas\n";
-    cout << "ir <dir>     - moverse\n";
-    cout << "atacar       - iniciar combate\n";
-    cout << "recoger      - tomar objetos\n";
-    cout << "salir        - terminar juego\n";
+    cout << "\n=== COMANDOS DE EXPLORACIÓN ===\n";
+    cout << "1. Mirar habitación\n";
+    cout << "2. Ver estado del jugador\n";
+    cout << "3. Moverse\n";
+    cout << "4. Atacar (si hay enemigos)\n";
+    cout << "5. Recoger objetos\n";
+    cout << "salir. Terminar juego\n\n";
 }
 
 void GameController::mostrarOpcionesCombate() {
-    cout << "\n=== Comandos de Combate ===\n";
-    cout << "atacar       - ataque normal\n";
-    cout << "habilidad    - usar habilidad especial\n";
-    cout << "curar        - usar poción (max 2)\n";
-    cout << "estado       - ver vida y estado\n";
-    cout << "huir         - abandonar combate\n";
-    cout << "salir        - terminar juego\n";
+    cout << "\n=== COMANDOS DE COMBATE ===\n";
+    cout << "1. Atacar\n";
+    cout << "2. Usar habilidad especial\n";
+    cout << "3. Usar poción\n";
+    cout << "4. Ver estado\n";
+    cout << "5. Huir\n";
 }
 
 void GameController::mover(const string& dir) {
@@ -155,8 +112,10 @@ void GameController::mover(const string& dir) {
         return;
     }
 
+    pocionesUsadas = 0;
+    ataquesRealizados = 0;
+
     manager.setCurrentRoom(next->getID());
-    pocionesUsadas = 0;  // reinicio por nueva habitación
     manager.printCurrentRoom();
 }
 
@@ -170,18 +129,26 @@ void GameController::iniciarCombate() {
 
     enCombate = true;
     pocionesUsadas = 0;
+    ataquesRealizados = 0;
 
-    cout << "\n*** Inicias un combate ***\n";
+    cout << "\n--- COMBATE INICIADO ---\n";
     mostrarOpcionesCombate();
+}
+
+void GameController::huirCombate() {
+    cout << "\nIntentas huir...\n";
+    enCombate = false;
+    cout << "Logras escapar del combate.\n";
 }
 
 void GameController::combatir() {
     Habitacion* hab = manager.getCurrentRoom();
     Enemigo* enemigo = hab->getEnemigos().front();
 
-    cout << "\nCombates contra: " << enemigo->getNombre() << "\n";
+    cout << "\nPeleas contra: " << enemigo->getNombre() << "\n";
 
-    // turno jugador
+    ataquesRealizados++;
+
     jugador->atacar();
     enemigo->recibirDano(jugador->getAtaque());
 
@@ -190,10 +157,10 @@ void GameController::combatir() {
         hab->eliminarPrimerEnemigo();
 
         enCombate = false;
+        revisarFinDeJuego();
         return;
     }
 
-    // turno enemigo
     enemigo->atacar();
     jugador->recibirDano(enemigo->getAtaque());
 
@@ -205,31 +172,55 @@ void GameController::combatir() {
 
 void GameController::usarPocion() {
     if (pocionesUsadas >= MAX_POCIONES) {
-        cout << "Ya usaste todas las pociones en este combate.\n";
+        cout << "Ya no puedes usar más pociones.\n";
         return;
     }
 
     jugador->setSalud(jugador->getSalud() + 30);
     pocionesUsadas++;
 
-    cout << "Usas una pocion (+30 HP).\n";
+    cout << "Usaste una poción (+30 HP).\n";
     jugador->mostrarEstado();
 }
 
 void GameController::usarHabilidad() {
-    if (Simon* s = dynamic_cast<Simon*>(jugador)) {
+    if (ataquesRealizados < 2) {
+        cout << "Debes atacar 2 veces antes de usar tu habilidad.\n";
+        return;
+    }
+
+    ataquesRealizados = 0;
+
+    if (auto s = dynamic_cast<Simon*>(jugador))
         s->cargaDelValor();
-        return;
-    }
-
-    if (JuanPablo* j = dynamic_cast<JuanPablo*>(jugador)) {
+    else if (auto j = dynamic_cast<JuanPablo*>(jugador))
         j->tormenta();
+}
+
+void GameController::recogerObjeto() {
+    Habitacion* hab = manager.getCurrentRoom();
+
+    if (hab->getObjetos().empty()) {
+        cout << "No hay objetos.\n";
         return;
     }
+
+    Objeto* obj = hab->getObjetos().front();
+    hab->eliminarPrimerObjeto();
+
+    cout << "Recogiste: " << obj->getNombre() << "\n";
+
+    obj->aplicar(jugador);
+
+    delete obj;
 }
 
-void GameController::huirCombate() {
-    enCombate = false;
-    cout << "Huyes del combate.\n";
-}
+void GameController::revisarFinDeJuego() {
+    Habitacion* hab = manager.getCurrentRoom();
 
+    if (hab->getID() == "montana" && hab->getEnemigos().empty()) {
+        cout << "\n*** Recuperaste el CRISTAL DEL AMANECER ***\n";
+        cout << " FIN DEL JUEGO \n";
+        juegoActivo = false;
+    }
+}

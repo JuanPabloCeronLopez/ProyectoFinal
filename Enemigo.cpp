@@ -84,7 +84,7 @@ void Boss::verificarFase() {
 // Implementación de clase Señor de la Sombra
 
 SenorDeLaSombra::SenorDeLaSombra()
-    : Boss("Señor de la Sombra", 500, 30, 150) {
+    : Boss("Señor de la Sombra", 300, 30, 150) {
 }
 
 void SenorDeLaSombra::atacar() {
@@ -104,10 +104,10 @@ void SenorDeLaSombra::usarHabilidad() {
     std::cout << "╚═══════════════════════════════════════╝\n";
     std::cout << nombre << " drena la esencia vital de su enemigo!\n";
 
-    int danoEspecial = ataque + 20;
+    int danoEspecial = ataque + 5;
     std::cout << "Daño: " << danoEspecial << " puntos\n";
 
-    int curacion = 20;
+    int curacion = 5;
     salud += curacion;
     if (salud > saludMaxima) salud = saludMaxima;
 
@@ -117,7 +117,7 @@ void SenorDeLaSombra::usarHabilidad() {
 
 //Implementación clase Dragón Rojo
 DragonRojo::DragonRojo()
-    : Boss("Dragón Rojo ", 1000, 45, 500) {
+    : Boss("Dragón Rojo ", 500, 45, 500) {
 }
 
 void DragonRojo::atacar() {
